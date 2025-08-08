@@ -3,45 +3,71 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0b1220; --card:#0f172a; --text:#e2e8f0; --muted:#94a3b8; --brand:#7c3aed;
+  /* DARK THEME DEFAULTS */
+  --bg: #0b1220;
+  --text: #e2e8f0;
+  --card: #0f172a;
+  --muted: #94a3b8;
+
+  /* Animated gradient colors (DARK: low opacity, cooler palette) */
+  --grad-a: rgba(110, 64, 255, 0.25);
+  --grad-b: rgba(77, 231, 226, 0.18);
+  --grad-c: rgba(249, 203, 40, 0.12);
+  --grad-d: rgba(255, 107, 107, 0.14);
+
+  /* Grain overlay */
   --grain: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
 <filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/></filter>\
 <rect width='100%' height='100%' filter='url(%23n)' opacity='.05'/></svg>");
 }
-[data-theme="light"] { --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --brand:#7c3aed; }
-body{
-  color:var(--text);
-  background:
-   radial-gradient(1200px 600px at 0% -20%, #1a1033 0%, transparent 60%),
-   radial-gradient(1200px 600px at 100% 120%, #132a54 0%, transparent 60%),
-   linear-gradient(180deg, rgba(124,58,237,.25), transparent),
-   var(--grain), var(--bg);
-  min-height:100dvh;
-}
-.container{max-width:1000px;margin:0 auto;padding:1rem;}
-.card{background:var(--card);border-radius:18px;padding:1rem;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.btn{background:var(--brand);color:#fff;padding:.6rem 1rem;border-radius:.8rem}
-.input{background:transparent;border:1px solid #334155;border-radius:.6rem;padding:.5rem .8rem;color:inherit}
-.table{width:100%;border-collapse:collapse}
-.table th,.table td{padding:.6rem;border-bottom:1px solid #233047;text-align:left}
-.avatar{width:28px;height:28px;border-radius:999px;object-fit:cover;margin-right:.5rem;border:1px solid #1f2937}
-.row{display:flex;align-items:center;gap:.6rem}
-a{color:var(--brand)}
-.toggle{background:#0b1020;border:1px solid #2a3350;border-radius:10px;padding:.3rem .6rem;font-size:.9rem}
-.details{cursor:pointer}
-.details summary{list-style:none}
-.details summary::-webkit-details-marker{display:none}
-.rarity-common { border-left:4px solid #64748b; }
-.rarity-rare { border-left:4px solid #22c55e; box-shadow: inset 0 0 0 1px #134e4a; }
-.rarity-legendary { border-left:4px solid #f59e0b; box-shadow: 0 0 18px rgba(245,158,11,.35) inset; }
-@keyframes bgShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-body{
-  background:
-    radial-gradient(1200px 600px at 0% -20%, #31106c 0%, transparent 60%),
-    radial-gradient(1200px 600px at 100% 120%, #0d3b66 0%, transparent 60%),
-    linear-gradient(120deg,#6e40ff,#4de7e2,#f9cb28,#ff6b6b);
-  background-size: 300% 300%, 300% 300%, 400% 400%;
-  animation: bgShift 40s ease infinite;
+
+/* LIGHT THEME OVERRIDES */
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --card: #ffffff;
+  --muted: #475569;
+
+  /* LIGHT: higher opacity, warmer/brighter mix */
+  --grad-a: rgba(110, 64, 255, 0.55);
+  --grad-b: rgba(77, 231, 226, 0.45);
+  --grad-c: rgba(249, 203, 40, 0.40);
+  --grad-d: rgba(255, 107, 107, 0.42);
 }
 
+@keyframes bgShift {
+  0% { background-position: 0% 50%, 100% 50%, 0% 0%; }
+  50% { background-position: 100% 50%, 0% 50%, 100% 100%; }
+  100% { background-position: 0% 50%, 100% 50%, 0% 0%; }
+}
+
+/* Animated, theme-aware background */
+body {
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 0% -20%, rgba(0,0,0,0.35), transparent 60%), /* keeps dark vibe in dark */
+    radial-gradient(1200px 600px at 100% 120%, rgba(0,0,0,0.25), transparent 60%),
+    linear-gradient(120deg, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-d)),
+    var(--grain);
+  background-size: 300% 300%, 300% 300%, 400% 400%, auto;
+  background-blend-mode: multiply, multiply, normal, normal; /* preserves “dark tone” in dark */
+  animation: bgShift 40s ease infinite;
+  min-height: 100dvh;
+}
+
+/* Light theme: soften the dark overlays so colors stay bright */
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(1200px 600px at 0% -20%, rgba(0,0,0,0.08), transparent 60%),
+    radial-gradient(1200px 600px at 100% 120%, rgba(0,0,0,0.06), transparent 60%),
+    linear-gradient(120deg, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-d)),
+    var(--grain);
+  background-blend-mode: normal, normal, normal, normal;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+}
