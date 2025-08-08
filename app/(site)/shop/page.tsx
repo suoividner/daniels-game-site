@@ -1,19 +1,24 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { motion } from 'framer-motion';
 
 function nextNoonEST() {
   const now = new Date();
   const fmt = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/New_York',
     hour12: false,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
   });
   const parts: any = Object.fromEntries(fmt.formatToParts(now).map(p => [p.type, p.value]));
   const estTodayNoon = new Date(`${parts.year}-${parts.month}-${parts.day}T12:00:00-05:00`);
-  let target = estTodayNoon;
   const estNow = new Date(fmt.format(now));
+  let target = estTodayNoon;
   if (estNow.getTime() >= estTodayNoon.getTime()) {
     target = new Date(estTodayNoon.getTime() + 24 * 3600 * 1000);
   }
@@ -28,9 +33,11 @@ function useCountdown(target: Date) {
   }, []);
   const diff = Math.max(0, target.getTime() - now);
   const h = Math.floor(diff / 3600000),
-        m = Math.floor((diff % 3600000) / 60000),
-        s = Math.floor((diff % 60000) / 1000);
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    m = Math.floor((diff % 3600000) / 60000),
+    s = Math.floor((diff % 60000) / 1000);
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s
+    .toString()
+    .padStart(2, '0')}`;
 }
 
 export default function ShopPage() {
@@ -53,7 +60,9 @@ export default function ShopPage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const buy = async (item_id: number) => {
     const u = (await supabase.auth.getUser()).data.user;
@@ -68,22 +77,33 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="grid gap-4">
+    <motion.div
+      className="grid gap-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <div className="card flex items-center justify-between">
         <h2 className="text-xl font-semibold">Shop • refreshes at 12:00 PM EST</h2>
-        <div>Next refresh in <b>{left}</b> • Your Coins: <b>{balance}</b></div>
+        <div>
+          Next refresh in <b>{left}</b> • Your Coins: <b>{balance}</b>
+        </div>
       </div>
       <div className="card">
         <table className="table">
           <thead>
-            <tr><th>Item</th><th>Price</th><th>Left</th><th></th></tr>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Left</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             {rows.map((r: any) => (
               <>
                 <tr
                   key={r.item_id}
-                  className={`rarity-${r.rarity}`} // rarity class for styling
                   onClick={() => document.getElementById('d' + r.item_id)?.toggleAttribute('open')}
                   style={{ cursor: 'pointer' }}
                 >
@@ -93,7 +113,10 @@ export default function ShopPage() {
                   <td>
                     <button
                       className="btn"
-                      onClick={(e) => { e.stopPropagation(); buy(r.item_id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        buy(r.item_id);
+                      }}
                     >
                       Buy
                     </button>
@@ -104,7 +127,7 @@ export default function ShopPage() {
                     <details id={'d' + r.item_id} className="details">
                       <summary></summary>
                       <div className="p-3 text-sm text-slate-300">
-                        {r.description || 'No description available.'}
+                        Click to view details in your database’s <code>items.description</code> (you can edit there).
                       </div>
                     </details>
                   </td>
@@ -114,6 +137,6 @@ export default function ShopPage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 }
