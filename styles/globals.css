@@ -3,17 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0b1220;
-  --card: #131b2e;
-  --muted: #94a3b8;
-  --text: #e2e8f0;
   --brand: #7c3aed;
+  --bg-start: #f8fafc;
+  --bg-end: #dbeafe;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
 }
-body { background: var(--bg); color: var(--text); }
+html.dark {
+  --bg-start: #0f172a;
+  --bg-end: #1e293b;
+  --card: #131b2e;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+}
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  color: var(--text);
+  position: relative;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.15'/></svg>");
+}
 a { color: var(--brand); }
 .card { background: var(--card); border-radius: 1rem; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
-.btn { background: var(--brand); color: white; padding: .6rem 1rem; border-radius: .8rem; }
-.input { background: #0f172a; border: 1px solid #1f2a44; border-radius: .5rem; padding: .6rem .8rem; color: var(--text); }
+.btn { background: var(--brand); color: #fff; padding: .6rem 1rem; border-radius: .8rem; }
+.input { background: var(--card); border: 1px solid #1f2a44; border-radius: .5rem; padding: .6rem .8rem; color: var(--text); }
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { padding: .5rem .6rem; border-bottom: 1px solid #1f2a44; text-align: left; }
 .container { max-width: 1000px; margin: 0 auto; padding: 1rem; }

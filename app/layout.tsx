@@ -1,5 +1,7 @@
 import '../styles/globals.css';
 import Link from 'next/link';
+import AuthButton from '@/components/AuthButton';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export const metadata = { title: "Daniel's Game", description: 'Tracker' };
 
@@ -10,12 +12,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="container">
           <header className="flex items-center justify-between pb-4">
             <h1 className="text-2xl font-bold">Daniel&apos;s Game</h1>
-            <nav className="flex gap-4">
+            <nav className="flex items-center gap-4">
               <Link href="/">Home</Link>
-              <Link href="/leaderboard">Leaderboard</Link>
               <Link href="/shop">Shop</Link>
               <Link href="/inventory">My Inventory</Link>
               <Link href="/admin">Admin</Link>
+              <AuthButton />
+              <ThemeToggle />
             </nav>
           </header>
           <main>{children}</main>
