@@ -33,8 +33,7 @@ function ItemRow({
 
   useEffect(() => {
     if (!showPicker) return;
-    supabase.from('profiles').select('id, username').order('username')
-      .then(({ data }) => setPlayers(data || []));
+    supabase.rpc('list_players').then(({ data }) => setPlayers(data || []));
   }, [showPicker]);
 
   return (
@@ -47,20 +46,30 @@ function ItemRow({
         <td>{it.emoji} {it.name}</td>
         <td>{it.qty}</td>
         <td title={t.title}>{t.label}</td>
-        <td className="flex gap-2">
+
+        {/* Target column */}
+        <td>
           {it.is_targeted ? (
             <button className="btn" onClick={(e)=>{ e.stopPropagation(); setShowPicker(true); }}>
               Select Target
             </button>
-          ) : (
-            <button className="btn" title="Trash" onClick={(e)=>{ e.stopPropagation(); onTrash(it.id); }}>
-              🗑️
-            </button>
-          )}
+          ) : '—'}
+        </td>
+
+        {/* Delete column */}
+        <td className="text-right">
+          <button
+            title="Trash"
+            className="btn"
+            style={{ padding: '.35rem .6rem' }}
+            onClick={(e) => { e.stopPropagation(); onTrash(it.id); }}
+          >
+            🗑️
+          </button>
         </td>
       </tr>
 
-      <tr><td colSpan={4} style={{ padding: 0 }}>
+      <tr><td colSpan={5} style={{ padding: 0 }}>
         <details id={'inv'+it.id} className="details"><summary></summary>
           <div className="p-3 text-sm text-slate-300">{it.description || 'No description.'}</div>
         </details>
@@ -68,17 +77,14 @@ function ItemRow({
 
       {showPicker && (
         <tr>
-          <td colSpan={4} style={{ padding: 0 }}>
+          <td colSpan={5} style={{ padding: 0 }}>
             <div className="card p-3" onClick={(e)=>e.stopPropagation()}>
               <div className="flex items-center gap-2">
                 <select className="input" value={target} onChange={(e)=>setTarget(e.target.value)}>
                   <option value="">Choose a player…</option>
                   {players.map(p => <option key={p.id} value={p.id}>{p.username}</option>)}
                 </select>
-                <button
-                  className="btn"
-                  onClick={()=>{ if(!target) return; onUseTargeted(it.id, target); setShowPicker(false); }}
-                >
+                <button className="btn" onClick={()=>{ if(!target) return; onUseTargeted(it.id, target); setShowPicker(false); }}>
                   Confirm
                 </button>
                 <button className="btn" onClick={()=>setShowPicker(false)}>Cancel</button>
@@ -133,7 +139,11 @@ export default function InventoryPage() {
       <div className="card">
         <h2 className="text-xl font-semibold mb-4">My Items</h2>
         <table className="table table--inv">
-          <thead><tr><th>Item</th><th>Qty</th><th>Expires</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th>Item</th><th>Qty</th><th>Expires</th><th>Target</th><th></th>
+            </tr>
+          </thead>
           <tbody>
             {items.map((it) => (
               <ItemRow
