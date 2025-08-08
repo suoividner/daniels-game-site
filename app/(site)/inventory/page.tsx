@@ -17,26 +17,76 @@ function useCountdownTo(dateStr?: string | null) {
   };
 }
 
-function ItemRow({ it, onTrash }: { it: any; onTrash: (id: number) => void }) {
+function ItemRow({
+  it,
+  onTrash,
+  onUseTargeted
+}: {
+  it: any;
+  onTrash: (id: number) => void;
+  onUseTargeted: (userItemId: number, targetId: string) => void;
+}) {
   const t = useCountdownTo(it.expires_at);
+  const [showPicker, setShowPicker] = useState(false);
+  const [players, setPlayers] = useState<any[]>([]);
+  const [target, setTarget] = useState<string>('');
+
+  useEffect(() => {
+    if (!showPicker) return;
+    supabase.from('profiles').select('id, username').order('username')
+      .then(({ data }) => setPlayers(data || []));
+  }, [showPicker]);
+
   return (
     <>
-      <tr onClick={() => document.getElementById('inv'+it.id)?.toggleAttribute('open')} style={{ cursor: 'pointer' }}>
+      <tr
+        onClick={() => document.getElementById('inv' + it.id)?.toggleAttribute('open')}
+        style={{ cursor: 'pointer' }}
+        title="Click for details"
+      >
         <td>{it.emoji} {it.name}</td>
         <td>{it.qty}</td>
         <td title={t.title}>{t.label}</td>
-        <td>
-          <button title="Trash" className="btn" style={{ padding: '.3rem .5rem' }}
-            onClick={(e) => { e.stopPropagation(); onTrash(it.id); }}>
-            🗑️
-          </button>
+        <td className="flex gap-2">
+          {it.is_targeted ? (
+            <button className="btn" onClick={(e)=>{ e.stopPropagation(); setShowPicker(true); }}>
+              Select Target
+            </button>
+          ) : (
+            <button className="btn" title="Trash" onClick={(e)=>{ e.stopPropagation(); onTrash(it.id); }}>
+              🗑️
+            </button>
+          )}
         </td>
       </tr>
+
       <tr><td colSpan={4} style={{ padding: 0 }}>
         <details id={'inv'+it.id} className="details"><summary></summary>
           <div className="p-3 text-sm text-slate-300">{it.description || 'No description.'}</div>
         </details>
       </td></tr>
+
+      {showPicker && (
+        <tr>
+          <td colSpan={4} style={{ padding: 0 }}>
+            <div className="card p-3" onClick={(e)=>e.stopPropagation()}>
+              <div className="flex items-center gap-2">
+                <select className="input" value={target} onChange={(e)=>setTarget(e.target.value)}>
+                  <option value="">Choose a player…</option>
+                  {players.map(p => <option key={p.id} value={p.id}>{p.username}</option>)}
+                </select>
+                <button
+                  className="btn"
+                  onClick={()=>{ if(!target) return; onUseTargeted(it.id, target); setShowPicker(false); }}
+                >
+                  Confirm
+                </button>
+                <button className="btn" onClick={()=>setShowPicker(false)}>Cancel</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
     </>
   );
 }
@@ -56,13 +106,21 @@ export default function InventoryPage() {
     if (!user) return;
     const { data: bal } = await supabase.from('coins').select('balance').eq('user_id', user.id).single();
     setBalance(bal?.balance || 0);
-    const { data: inv, error } = await supabase.from('user_items_view').select('*').eq('user_id', user.id);
-    if (error) console.error(error);
+    const { data: inv } = await supabase.from('user_items_view').select('*').eq('user_id', user.id);
     setItems(inv || []);
   }
   useEffect(() => { reload(); }, [user]);
 
-  const trash = async (user_item_id: number) => { await supabase.from('user_items').delete().eq('id', user_item_id); reload(); };
+  const trash = async (user_item_id: number) => {
+    await supabase.from('user_items').delete().eq('id', user_item_id);
+    reload();
+  };
+
+  const useTargeted = async (user_item_id: number, target_id: string) => {
+    const { error } = await supabase.rpc('use_targeted_item', { p_user_item_id: user_item_id, p_target: target_id });
+    if (error) { alert(error.message); return; }
+    reload();
+  };
 
   if (!user) return <div className="card">Please sign in to view your inventory.</div>;
 
@@ -77,7 +135,14 @@ export default function InventoryPage() {
         <table className="table">
           <thead><tr><th>Item</th><th>Qty</th><th>Expires</th><th></th></tr></thead>
           <tbody>
-            {items.map((it) => <ItemRow key={it.id} it={it} onTrash={trash} />)}
+            {items.map((it) => (
+              <ItemRow
+                key={it.id}
+                it={it}
+                onTrash={trash}
+                onUseTargeted={useTargeted}
+              />
+            ))}
           </tbody>
         </table>
       </div>
