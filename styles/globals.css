@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme variables */
 :root {
   /* DARK THEME DEFAULTS */
   --bg: #0b1220;
@@ -36,28 +37,29 @@
   --grad-d: rgba(255, 107, 107, 0.42);
 }
 
+/* Gradient animation */
 @keyframes bgShift {
   0% { background-position: 0% 50%, 100% 50%, 0% 0%; }
   50% { background-position: 100% 50%, 0% 50%, 100% 100%; }
   100% { background-position: 0% 50%, 100% 50%, 0% 0%; }
 }
 
-/* Animated, theme-aware background */
+/* Base styles */
 body {
   color: var(--text);
   background-color: var(--bg);
   background-image:
-    radial-gradient(1200px 600px at 0% -20%, rgba(0,0,0,0.35), transparent 60%), /* keeps dark vibe in dark */
+    radial-gradient(1200px 600px at 0% -20%, rgba(0,0,0,0.35), transparent 60%),
     radial-gradient(1200px 600px at 100% 120%, rgba(0,0,0,0.25), transparent 60%),
     linear-gradient(120deg, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-d)),
     var(--grain);
   background-size: 300% 300%, 300% 300%, 400% 400%, auto;
-  background-blend-mode: multiply, multiply, normal, normal; /* preserves “dark tone” in dark */
+  background-blend-mode: multiply, multiply, normal, normal;
   animation: bgShift 40s ease infinite;
   min-height: 100dvh;
 }
 
-/* Light theme: soften the dark overlays so colors stay bright */
+/* Light theme adjustments */
 [data-theme="light"] body {
   background-image:
     radial-gradient(1200px 600px at 0% -20%, rgba(0,0,0,0.08), transparent 60%),
@@ -65,6 +67,51 @@ body {
     linear-gradient(120deg, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-d)),
     var(--grain);
   background-blend-mode: normal, normal, normal, normal;
+}
+
+/* Card utility class */
+.card {
+  background-color: var(--card);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Table utility class */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--muted);
+}
+
+/* Button utility class */
+.btn {
+  background-color: var(--grad-a);
+  color: var(--text);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: var(--grad-b);
+}
+
+/* Details toggle styling */
+.details summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.details summary::-webkit-details-marker {
+  display: none;
 }
 
 /* Respect reduced motion */
