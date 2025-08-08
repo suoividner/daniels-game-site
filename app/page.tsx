@@ -25,7 +25,7 @@ export default function HomePage() {
   return (
     <div className="card">
       <h2 className="text-xl font-semibold mb-4">Leaderboard</h2>
-      <table className="table">
+      <table className="table table--lb">
         <thead><tr><th>#</th><th>Player</th><th>Score</th></tr></thead>
         <tbody>
           {rows.map((r,i)=>(
