@@ -40,15 +40,11 @@ export default function HomePage() {
       <div className="card flex items-center justify-between">
         <div>
           {user ? (
-  <p>Signed in as <b>{
-    profile?.username
-    || user.user_metadata?.global_name
-    || user.user_metadata?.user_name
-    || user.user_metadata?.name
-    || user.user_metadata?.preferred_username
-    || user.email
-  }</b></p>
-) : (<p>Not signed in.</p>)}
+  <p>Signed in as <b>{user.user_metadata?.global_name || profile?.username || user.email}</b></p>
+) : (
+  <p>Not signed in.</p>
+)}
+
 
         </div>
         <div className="flex gap-2">
