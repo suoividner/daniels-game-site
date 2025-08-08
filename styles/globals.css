@@ -254,3 +254,7 @@ body {
   min-width: 40px;
   text-align: center;
 }
+.badges{ display:flex; gap:.4rem; align-items:center; }
+.badge{ font-size:.75rem; padding:.2rem .5rem; border-radius:.5rem; background:rgba(148,163,184,.15); }
+.badge-IMMUNE{ background:#10b98122; border:1px solid #10b98155; }
+.badge-POISONED{ background:#ef444422; border:1px solid #ef444466; }
