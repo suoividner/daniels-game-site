@@ -26,3 +26,19 @@
     "@types/node": "^20.14.10"
   }
 }
+import { motion, AnimatePresence } from "framer-motion";
+// ...
+<tbody>
+  <AnimatePresence initial={false}>
+    {rows.map((r,i)=>(
+      <motion.tr key={r.user_id}
+        layout
+        initial={{opacity:0, y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}}
+        transition={{type:'spring', stiffness:300, damping:24}}>
+        <td>{i+1}</td>
+        <td><div className="row"><img className="avatar" src={r.avatar_url||'/favicon.ico'} />{r.username}</div></td>
+        <td>{r.score}</td>
+      </motion.tr>
+    ))}
+  </AnimatePresence>
+</tbody>
