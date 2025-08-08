@@ -10,36 +10,20 @@
     "postinstall": "tailwindcss -i ./styles/globals.css -o ./public/tailwind.css"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.45.4",
+    "framer-motion": "^11.0.0",
+    "jsonwebtoken": "9.0.2",
     "next": "14.2.5",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "@supabase/supabase-js": "2.45.4",
-    "jsonwebtoken": "9.0.2",
-    "framer-motion": "^11.0.0"
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "autoprefixer": "10.4.19",
     "postcss": "8.4.39",
     "tailwindcss": "3.4.10",
-    "typescript": "^5.5.4",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@types/node": "^20.14.10"
+    "typescript": "^5.5.4"
   }
 }
-import { motion, AnimatePresence } from "framer-motion";
-// ...
-<tbody>
-  <AnimatePresence initial={false}>
-    {rows.map((r,i)=>(
-      <motion.tr key={r.user_id}
-        layout
-        initial={{opacity:0, y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}}
-        transition={{type:'spring', stiffness:300, damping:24}}>
-        <td>{i+1}</td>
-        <td><div className="row"><img className="avatar" src={r.avatar_url||'/favicon.ico'} />{r.username}</div></td>
-        <td>{r.score}</td>
-      </motion.tr>
-    ))}
-  </AnimatePresence>
-</tbody>
