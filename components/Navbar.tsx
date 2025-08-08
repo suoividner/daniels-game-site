@@ -66,7 +66,7 @@ function SettingsMenu() {
         ⚙️
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 flex w-48 flex-col gap-2 rounded bg-base-300 p-2 shadow">
+        <div className="absolute right-0 mt-2 flex w-48 flex-col gap-2 rounded bg-[var(--card)] p-2 shadow">
           <Link href="/admin">Admin</Link>
           <ThemeToggle />
           <AuthButtons />
