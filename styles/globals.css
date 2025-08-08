@@ -32,3 +32,6 @@ a{color:var(--brand)}
 .details{cursor:pointer}
 .details summary{list-style:none}
 .details summary::-webkit-details-marker{display:none}
+.rarity-common { border-left:4px solid #64748b; }
+.rarity-rare { border-left:4px solid #22c55e; box-shadow: inset 0 0 0 1px #134e4a; }
+.rarity-legendary { border-left:4px solid #f59e0b; box-shadow: 0 0 18px rgba(245,158,11,.35) inset; }
