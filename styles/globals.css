@@ -247,3 +247,10 @@ body {
 @media (max-width: 420px) {
   .table{ min-width: 720px; }   /* force scroll instead of squishing */
 }
+/* Fix leaderboard # column width */
+.table.leaderboard th:nth-child(1),
+.table.leaderboard td:nth-child(1) {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+}
