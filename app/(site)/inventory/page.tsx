@@ -132,7 +132,7 @@ export default function InventoryPage() {
       </div>
       <div className="card">
         <h2 className="text-xl font-semibold mb-4">My Items</h2>
-        <table className="table">
+        <table className="table table--inv">
           <thead><tr><th>Item</th><th>Qty</th><th>Expires</th><th></th></tr></thead>
           <tbody>
             {items.map((it) => (
