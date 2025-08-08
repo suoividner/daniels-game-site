@@ -2,6 +2,17 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
+function useCountdownTo(dateStr?: string|null) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(()=>{ const t=setInterval(()=>setNow(Date.now()),1000); return ()=>clearInterval(t); },[]);
+  if (!dateStr) return { label:'—', title:'' };
+  const ts = new Date(dateStr).getTime();
+  const diff = Math.max(0, ts - now);
+  const h = Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  return { label:`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`,
+           title:new Date(dateStr).toLocaleString() };
+}
+
 export default function InventoryPage() {
   const [user, setUser] = useState<any>(null);
   const [balance, setBalance] = useState<number>(0);
@@ -9,27 +20,20 @@ export default function InventoryPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
     return () => { sub.subscription.unsubscribe(); };
   }, []);
 
-  useEffect(() => {
+  async function reload() {
     if (!user) return;
-    (async () => {
-      const { data: bal } = await supabase.from('coins').select('balance').eq('user_id', user.id).single();
-      setBalance(bal?.balance || 0);
-      const { data: inv } = await supabase.from('user_items_view').select('*').eq('user_id', user.id);
-      setItems(inv || []);
-    })();
-  }, [user]);
-
-  const trash = async (user_item_id: number) => {
-    await supabase.from('user_items').delete().eq('id', user_item_id);
-    const { data: inv } = await supabase.from('user_items_view').select('*').eq('user_id', user.id);
+    const { data: bal } = await supabase.from('coins').select('balance').eq('user_id', user.id).single();
+    setBalance(bal?.balance || 0);
+    const { data: inv } = await supabase.from('user_items_view').select('*, description').eq('user_id', user.id);
     setItems(inv || []);
-  };
+  }
+  useEffect(()=>{ reload(); }, [user]);
+
+  const trash = async (user_item_id: number) => { await supabase.from('user_items').delete().eq('id', user_item_id); reload(); };
 
   if (!user) return <div className="card">Please sign in to view your inventory.</div>;
 
@@ -44,14 +48,24 @@ export default function InventoryPage() {
         <table className="table">
           <thead><tr><th>Item</th><th>Qty</th><th>Expires</th><th></th></tr></thead>
           <tbody>
-            {items.map((it) => (
-              <tr key={it.id}>
-                <td>{it.emoji} {it.name}</td>
-                <td>{it.qty}</td>
-                <td>{it.expires_at ? new Date(it.expires_at).toLocaleString() : '-'}</td>
-                <td><button className="btn" onClick={() => trash(it.id)}>Trash</button></td>
-              </tr>
-            ))}
+            {items.map((it:any) => {
+              const t = useCountdownTo(it.expires_at);
+              return (
+                <>
+                  <tr key={it.id} onClick={()=>document.getElementById('inv'+it.id)?.toggleAttribute('open')} style={{cursor:'pointer'}}>
+                    <td>{it.emoji} {it.name}</td>
+                    <td>{it.qty}</td>
+                    <td title={t.title}>{t.label}</td>
+                    <td><button title="Trash" className="btn" style={{padding:'.3rem .5rem'}} onClick={(e)=>{e.stopPropagation();trash(it.id);}}>🗑️</button></td>
+                  </tr>
+                  <tr><td colSpan={4} style={{padding:0}}>
+                    <details id={'inv'+it.id} className="details"><summary></summary>
+                      <div className="p-3 text-sm text-slate-300">{it.description || 'No description.'}</div>
+                    </details>
+                  </td></tr>
+                </>
+              );
+            })}
           </tbody>
         </table>
       </div>
