@@ -90,7 +90,7 @@ export default function ShopPage() {
         </div>
       </div>
       <div className="card">
-        <table className="table">
+        <table className="table table--shop">
           <thead>
             <tr>
               <th>Item</th>
