@@ -40,12 +40,12 @@ export default function HomePage() {
       <div className="card flex items-center justify-between">
         <div>
           {user ? (
-  <p>Signed in as <b>{user.user_metadata?.global_name || profile?.username || user.email}</b></p>
+  <p>Signed in as <b>{
+    (user.user_metadata?.global_name || profile?.username || user.email).replace(/#0$/, '')
+  }</b></p>
 ) : (
   <p>Not signed in.</p>
 )}
-
-
         </div>
         <div className="flex gap-2">
           {!user && <button className="btn" onClick={signIn}>Sign in with Discord</button>}
