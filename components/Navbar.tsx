@@ -53,6 +53,29 @@ function AuthButtons() {
   );
 }
 
+function SettingsMenu() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        aria-label="Settings"
+        className="text-xl"
+        onClick={() => setOpen((o) => !o)}
+      >
+        ⚙️
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 flex w-48 flex-col gap-2 rounded bg-base-200 p-2 shadow">
+          <Link href="/admin">Admin</Link>
+          <ThemeToggle />
+          <AuthButtons />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Navbar() {
   return (
     <header className="flex items-center justify-between pb-4">
@@ -63,9 +86,7 @@ export default function Navbar() {
         <Link href="/">Home</Link>
         <Link href="/shop">Shop</Link>
         <Link href="/inventory">My Inventory</Link>
-        <Link href="/admin">Admin</Link>
-        <ThemeToggle />
-        <AuthButtons />
+        <SettingsMenu />
       </nav>
     </header>
   );
