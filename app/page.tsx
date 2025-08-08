@@ -36,6 +36,7 @@ export default function HomePage() {
             <tr>
               <th>#</th>
               <th>Player</th>
+              <th>Status</th>   // between Player and Score
               <th>Score</th>
             </tr>
           </thead>
@@ -51,6 +52,16 @@ export default function HomePage() {
                     {r.username ?? 'Player'}
                   </div>
                 </td>
+                <td>
+  <div className="badges">
+    {(r.statuses?.length ? r.statuses : []).map((s:string)=>(
+      <span key={s} className={`badge badge-${s}`}>{s}</span>
+    ))}
+    {!r.statuses?.length && <span className="badge">—</span>}
+  </div>
+</td>
+<td style={{ textAlign:'right' }}>{r.score}</td>
+
                 <td style={{ textAlign: 'right' }}>{r.score}</td>
               </tr>
             ))}
