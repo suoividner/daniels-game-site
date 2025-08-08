@@ -21,16 +21,49 @@ function ThemeToggle() {
 
 function AuthButtons() {
   const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setUser(s?.user || null));
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+    };
   }, []);
-  const signIn = async () =>
-    supabase.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: window.location.origin } });
-  const signOut = async () => supabase.auth.signOut();
 
-  return user ? (
-    <button className="btn" onClick={signOut}>Sign out</button>
-  ) : (
-    <button className="btn" onClick={sig
+  const signIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: { redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined }
+    });
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  return (
+    <>
+      {user ? (
+        <button className="btn" onClick={signOut}>Sign out</button>
+      ) : (
+        <button className="btn" onClick={signIn}>Sign in with Discord</button>
+      )}
+    </>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <header className="flex items-center justify-between pb-4">
+      <h1 className="text-2xl font-bold">Daniel&apos;s Game</h1>
+      <nav className="flex items-center gap-4">
+        <Link href="/">Home</Link>
+        <Link href="/shop">Shop</Link>
+        <Link href="/inventory">My Inventory</Link>
+        <Link href="/admin">Admin</Link>
+        <ThemeToggle />
+        <AuthButtons />
+      </nav>
+    </header>
+  );
+}
