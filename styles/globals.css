@@ -143,10 +143,9 @@ body {
 .table { width:100%; border-collapse:collapse; table-layout:fixed; }
 .table th, .table td { padding:.75rem 1rem; border-bottom:1px solid rgba(148,163,184,.15); vertical-align:middle; }
 
-/* Leaderboard: [#, Δ, Player, Score, Coins] */
-.table--lb th:nth-child(1), .table--lb td:nth-child(1){ width:56px; }
-.table--lb th:nth-child(2), .table--lb td:nth-child(2){ width:56px; text-align:center; }
-.table--lb th:nth-child(4), .table--lb td:nth-child(4){ width:120px; text-align:right; white-space:nowrap; }
+/* Leaderboard: [Δ, #, Player, Status, Score] */
+.table--lb th:nth-child(1), .table--lb td:nth-child(1){ width:56px; text-align:center; }
+.table--lb th:nth-child(2), .table--lb td:nth-child(2){ width:56px; }
 .table--lb th:nth-child(5), .table--lb td:nth-child(5){ width:120px; text-align:right; white-space:nowrap; }
 .table--lb th, .table--lb td{ padding:1rem 1.25rem; font-size:1.125rem; }
 .table--lb .row{ display:flex; align-items:center; gap:.6rem; }
