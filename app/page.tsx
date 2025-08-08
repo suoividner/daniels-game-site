@@ -7,19 +7,19 @@ type Row = {
   username: string | null;
   avatar_url: string | null;
   score: number;
+  statuses?: string[]; // <-- NEW
 };
 
 export default function HomePage() {
   const [rows, setRows] = useState<Row[]>([]);
 
-  const load = async () => {
+  async function load() {
     const { data } = await supabase.rpc('public_leaderboard');
-    setRows(data || []);
-  };
+    setRows((data as Row[]) || []);
+  }
 
   useEffect(() => {
     load();
-    // realtime refresh when scores change
     const ch = supabase
       .channel('rt-scores')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'scores' }, load)
@@ -36,7 +36,7 @@ export default function HomePage() {
             <tr>
               <th>#</th>
               <th>Player</th>
-              <th>Status</th>   // between Player and Score
+              <th>Status</th> {/* NEW */}
               <th>Score</th>
             </tr>
           </thead>
@@ -46,22 +46,18 @@ export default function HomePage() {
                 <td>{i + 1}</td>
                 <td>
                   <div className="row">
-                    {r.avatar_url ? (
-                      <img className="avatar" src={r.avatar_url} alt="" />
-                    ) : null}
+                    {r.avatar_url ? <img className="avatar" src={r.avatar_url} alt="" /> : null}
                     {r.username ?? 'Player'}
                   </div>
                 </td>
                 <td>
-  <div className="badges">
-    {(r.statuses?.length ? r.statuses : []).map((s:string)=>(
-      <span key={s} className={`badge badge-${s}`}>{s}</span>
-    ))}
-    {!r.statuses?.length && <span className="badge">—</span>}
-  </div>
-</td>
-<td style={{ textAlign:'right' }}>{r.score}</td>
-
+                  <div className="badges">
+                    {(r.statuses && r.statuses.length ? r.statuses : []).map((s) => (
+                      <span key={s} className={`badge badge-${s}`}>{s}</span>
+                    ))}
+                    {(!r.statuses || r.statuses.length === 0) && <span className="badge">—</span>}
+                  </div>
+                </td>
                 <td style={{ textAlign: 'right' }}>{r.score}</td>
               </tr>
             ))}
