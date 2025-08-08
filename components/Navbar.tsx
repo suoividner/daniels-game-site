@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -55,7 +56,9 @@ function AuthButtons() {
 export default function Navbar() {
   return (
     <header className="flex items-center justify-between pb-4">
-      <h1 className="text-2xl font-bold">Daniel&apos;s Game</h1>
+      <Link href="/" aria-label="Home">
+        <Image src="/chrome-turtle.svg" alt="" width={32} height={32} />
+      </Link>
       <nav className="flex items-center gap-4">
         <Link href="/">Home</Link>
         <Link href="/shop">Shop</Link>
