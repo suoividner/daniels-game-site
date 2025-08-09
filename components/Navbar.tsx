@@ -53,6 +53,30 @@ function AuthButtons() {
   );
 }
 
+function SettingsMenu() {
+  return (
+    <div className="dropdown dropdown-end">
+      <button tabIndex={0} aria-label="Settings" className="btn btn-ghost text-xl">
+        ⚙️
+      </button>
+      <ul
+        tabIndex={0}
+        className="dropdown-content menu mt-2 w-48 rounded-box bg-base-300 p-2 shadow"
+      >
+        <li>
+          <Link href="/admin">Admin</Link>
+        </li>
+        <li>
+          <ThemeToggle />
+        </li>
+        <li>
+          <AuthButtons />
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 export default function Navbar() {
   return (
     <header className="flex items-center justify-between pb-4">
@@ -63,9 +87,7 @@ export default function Navbar() {
         <Link href="/">Home</Link>
         <Link href="/shop">Shop</Link>
         <Link href="/inventory">My Inventory</Link>
-        <Link href="/admin">Admin</Link>
-        <ThemeToggle />
-        <AuthButtons />
+        <SettingsMenu />
       </nav>
     </header>
   );
