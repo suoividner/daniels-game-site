@@ -144,7 +144,7 @@ body {
 .table th, .table td { padding:.75rem 1rem; border-bottom:1px solid rgba(148,163,184,.15); vertical-align:middle; }
 
 /* Leaderboard: [Δ, #, Player, Status, Score] */
-.table--lb th:nth-child(1), .table--lb td:nth-child(1){ width:56px; text-align:center; }
+.table--lb th:nth-child(1), .table--lb td:nth-child(1){ width:32px; min-width:32px; text-align:center; }
 .table--lb th:nth-child(2), .table--lb td:nth-child(2){ width:56px; }
 .table--lb th:nth-child(5), .table--lb td:nth-child(5){ width:120px; text-align:right; white-space:nowrap; }
 .table--lb th, .table--lb td{ padding:1rem 1.25rem; font-size:1.125rem; }
@@ -175,32 +175,32 @@ body {
   padding: 0.5rem 0.75rem;   /* Consistent padding */
 }
 
-.table th:nth-child(1), 
-.table td:nth-child(1) {
+.table:not(.table--lb) th:nth-child(1),
+.table:not(.table--lb) td:nth-child(1) {
   width: auto;
   min-width: 250px;         /* Enough room for long names */
 }
 
-.table th:nth-child(2), 
-.table td:nth-child(2) {
+.table:not(.table--lb) th:nth-child(2),
+.table:not(.table--lb) td:nth-child(2) {
   width: 80px;
   text-align: center;
 }
 
-.table th:nth-child(3), 
-.table td:nth-child(3) {
+.table:not(.table--lb) th:nth-child(3),
+.table:not(.table--lb) td:nth-child(3) {
   width: 160px;
   text-align: center;
 }
 
-.table th:nth-child(4), 
-.table td:nth-child(4) {
+.table:not(.table--lb) th:nth-child(4),
+.table:not(.table--lb) td:nth-child(4) {
   width: 150px;
   text-align: center;
 }
 
-.table th:nth-child(5), 
-.table td:nth-child(5) {
+.table:not(.table--lb) th:nth-child(5),
+.table:not(.table--lb) td:nth-child(5) {
   width: 90px;
   text-align: right;
 }
@@ -234,11 +234,11 @@ body {
   .table th, .table td{ padding:.6rem .75rem; }
 
   /* Column sizing tweaks (applies to all tables) */
-  .table th:nth-child(1), .table td:nth-child(1){ min-width: 200px; }
-  .table th:nth-child(2), .table td:nth-child(2){ width:70px; }
-  .table th:nth-child(3), .table td:nth-child(3){ width:140px; }
-  .table th:nth-child(4), .table td:nth-child(4){ width:140px; }
-  .table th:nth-child(5), .table td:nth-child(5){ width:80px; }
+  .table:not(.table--lb) th:nth-child(1), .table:not(.table--lb) td:nth-child(1){ min-width: 200px; }
+  .table:not(.table--lb) th:nth-child(2), .table:not(.table--lb) td:nth-child(2){ width:70px; }
+  .table:not(.table--lb) th:nth-child(3), .table:not(.table--lb) td:nth-child(3){ width:140px; }
+  .table:not(.table--lb) th:nth-child(4), .table:not(.table--lb) td:nth-child(4){ width:140px; }
+  .table:not(.table--lb) th:nth-child(5), .table:not(.table--lb) td:nth-child(5){ width:80px; }
 
   /* Buttons/avatars = easier tap targets */
   .table .btn{ width:100%; padding:.5rem .7rem; }
@@ -251,13 +251,6 @@ body {
 /* Optional: slightly larger mobile breakpoint for very small phones */
 @media (max-width: 420px) {
   .table{ min-width: 720px; }   /* force scroll instead of squishing */
-}
-/* Fix leaderboard # column width */
-.table.leaderboard th:nth-child(1),
-.table.leaderboard td:nth-child(1) {
-  width: 40px;
-  min-width: 40px;
-  text-align: center;
 }
 .badges{ display:flex; gap:.4rem; align-items:center; }
 .badge{ font-size:.75rem; padding:.2rem .5rem; border-radius:.5rem; background:rgba(148,163,184,.15); }
