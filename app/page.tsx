@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import ActivityLog from '@/components/ActivityLog';
 
 type Row = {
   user_id: string;
@@ -96,6 +97,7 @@ export default function HomePage() {
           </tbody>
         </table>
       </div>
+      <ActivityLog />
     </div>
   );
 }
