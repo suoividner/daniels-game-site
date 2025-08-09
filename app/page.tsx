@@ -8,6 +8,7 @@ type Row = {
   avatar_url: string | null;
   score: number;
   statuses?: string[]; // <-- NEW
+  change?: number;
 };
 
 export default function HomePage() {
@@ -15,7 +16,17 @@ export default function HomePage() {
 
   async function load() {
     const { data } = await supabase.rpc('public_leaderboard');
-    setRows((data as Row[]) || []);
+    const prev = JSON.parse(localStorage.getItem('lb-prev') || '{}');
+    const withChange = ((data as Row[]) || []).map((r, i) => {
+      const prevPos = prev[r.user_id];
+      return { ...r, change: prevPos ? prevPos - (i + 1) : 0 };
+    });
+    const map: Record<string, number> = {};
+    withChange.forEach((r, i) => {
+      map[r.user_id] = i + 1;
+    });
+    localStorage.setItem('lb-prev', JSON.stringify(map));
+    setRows(withChange);
   }
 
   useEffect(() => {
@@ -31,9 +42,10 @@ export default function HomePage() {
     <div className="grid gap-4">
       <div className="card">
         <h2 className="text-xl font-semibold mb-4">Leaderboard</h2>
-        <table className="table leaderboard">
+        <table className="table table--lb text-lg">
           <thead>
             <tr>
+              <th>Δ</th>
               <th>#</th>
               <th>Player</th>
               <th>Status</th> {/* NEW */}
@@ -42,7 +54,27 @@ export default function HomePage() {
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={r.user_id}>
+              <tr
+                key={r.user_id}
+                className={
+                  i === 0
+                    ? 'first-place'
+                    : i === 1
+                    ? 'second-place'
+                    : i === 2
+                    ? 'third-place'
+                    : ''
+                }
+              >
+                <td>
+                  {r.change && r.change > 0 ? (
+                    <span className="text-green-500">▲</span>
+                  ) : r.change && r.change < 0 ? (
+                    <span className="text-red-500">▼</span>
+                  ) : (
+                    <span className="text-gray-500">—</span>
+                  )}
+                </td>
                 <td>{i + 1}</td>
                 <td>
                   <div className="row">
@@ -58,7 +90,7 @@ export default function HomePage() {
                     {(!r.statuses || r.statuses.length === 0) && <span className="badge">—</span>}
                   </div>
                 </td>
-                <td style={{ textAlign: 'right' }}>{r.score}</td>
+                <td>{r.score}</td>
               </tr>
             ))}
           </tbody>
