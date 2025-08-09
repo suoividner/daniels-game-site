@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 function ThemeToggle() {
@@ -53,6 +53,40 @@ function AuthButtons() {
   );
 }
 
+function SettingsMenu() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        aria-label="Settings"
+        className="text-xl"
+        onClick={() => setOpen((o) => !o)}
+      >
+        ⚙️
+      </button>
+      <div
+        className={`absolute right-0 mt-2 flex w-48 flex-col items-center gap-2 rounded bg-[var(--card)] p-2 text-center shadow transition-transform transition-opacity duration-200 ${open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'}`}
+      >
+        <Link href="/admin">Admin</Link>
+        <ThemeToggle />
+        <AuthButtons />
+      </div>
+    </div>
+  );
+}
+
 export default function Navbar() {
   return (
     <header className="flex items-center justify-between pb-4">
@@ -63,9 +97,7 @@ export default function Navbar() {
         <Link href="/">Home</Link>
         <Link href="/shop">Shop</Link>
         <Link href="/inventory">My Inventory</Link>
-        <Link href="/admin">Admin</Link>
-        <ThemeToggle />
-        <AuthButtons />
+        <SettingsMenu />
       </nav>
     </header>
   );
