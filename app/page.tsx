@@ -74,3 +74,27 @@ export default function HomePage() {
                 <td>{i + 1}</td>
                 <td>
                   <div className="row">
+                    {r.avatar_url ? <img className="avatar" src={r.avatar_url} alt="" /> : null}
+                    {r.username ?? 'Player'}
+                  </div>
+                </td>
+                <td>
+                  <div className="badges">
+                    {(r.statuses?.length ? r.statuses : []).map((s) => (
+                      <span key={s} className={`badge badge-${s}`}>{s}</span>
+                    ))}
+                    {(!r.statuses || r.statuses.length === 0) && <span className="badge">—</span>}
+                  </div>
+                </td>
+                <td>{r.score}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Activity log below leaderboard */}
+      <ActivityLog />
+    </div>
+  );
+}
