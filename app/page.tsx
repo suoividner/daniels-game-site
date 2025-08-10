@@ -97,6 +97,23 @@ export default function HomePage() {
           </tbody>
         </table>
       </div>
+// load
+const { data } = await supabase
+  .from('activity_log')
+  .select('*')
+  .order('created_at', { ascending: false })
+  .limit(50);
+
+// realtime
+const channel = supabase
+  .channel('activity-log')
+  .on(
+    'postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'activity_log' },
+    (payload) => setLog((prev) => [payload.new, ...prev].slice(0,50))
+  )
+  .subscribe();
+
       <ActivityLog />
     </div>
   );
